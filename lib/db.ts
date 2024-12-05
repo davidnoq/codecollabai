@@ -1,6 +1,27 @@
 import supabase from '@/config/supabaseClient';
 
 // Fetch a user profile by ID
+// Fetch all user profiles except the specified user
+export const getAllProfiles = async (excludeUserId?: string) => {
+    const query = supabase
+        .from('profiles')
+        .select('*');
+
+    if (excludeUserId) {
+        query.neq('id', excludeUserId); // Exclude the current user
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+        console.error("Error fetching all user profiles:", error.message);
+        throw new Error(error.message);
+    }
+
+    return data;
+};
+
+
 export const getUserProfile = async (userId: string) => {
     const { data, error } = await supabase
         .from('profiles')
